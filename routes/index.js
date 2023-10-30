@@ -10,11 +10,8 @@ router.post('/send-sms', (req, res, next) => {
 
   try {
     const io = req.app.get('socketio');
-    const { to, message } = req.body
 
-    const payload = { to, message }
-
-    io.emit('send-sms', payload)
+    io.emit('send-sms', req.body)
 
     res.json({
       message: "Sent"
