@@ -42,7 +42,7 @@ app.set('socketio', io)
 setInterval(() => {
   console.log("Are you Alive?")
   io.emit("alive", "Are you alive")
-}, 1000*60)
+}, 1000*30)
 
 /**
  * Listen on provided port, on all network interfaces.
