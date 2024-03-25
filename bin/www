@@ -42,7 +42,7 @@ io.on('connection', (socket) => {
     const url = `https://letssolve.me/sms-webhook?reference=${reference}&status=${status}`
     console.log({url})
     fetch(url)
-      .then(r =>  r.json())
+      .then(r =>  r.text())
       .then(j => console.log("wehbook response", j))
       .catch(e => console.error(e))
   });

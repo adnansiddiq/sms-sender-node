@@ -14,13 +14,22 @@ router.get('/', function(req, res, next) {
 router.post('/send-sms', (req, res, next) => {
 
   try {
-    const io = req.app.get('socketio');
-    const {to, message, reference} = req.body
-    io.emit('send-sms', {to, message, reference})
 
-    res.json({
-      message: "Sent"
-    })
+    const { isOnline } = req.app.get('global');
+
+    if (isOnline) {
+      const io = req.app.get('socketio');
+      const {to, message, reference} = req.body
+      io.emit('send-sms', {to, message, reference})
+  
+      res.json({
+        message: "Sent"
+      })
+    } else {
+      res.status(402).json({
+        message: "Offline"
+      })
+    }
   } catch (error) {
     res.status(400).json({
       error: error.message
