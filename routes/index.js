@@ -4,6 +4,10 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
   //res.render('index', { title: 'Express' });
+
+  const global = req.app.get('global');
+  console.log({ global })
+
   res.json("I AM HEALTHY")
 });
 
