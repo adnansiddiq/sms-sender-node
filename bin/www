@@ -35,7 +35,7 @@ io.on('connection', (socket) => {
   socket.on('sms-sent', function(data) {
     console.log("SMS_SENT", data)
 
-    const {reference, status} = JSON.parse(data)
+    const {reference, status} = data
 
     const url = `https://letssolve.me/sms-webhook?reference=${reference}&status=${status}`
     console.log({url})
