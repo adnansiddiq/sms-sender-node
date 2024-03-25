@@ -34,6 +34,12 @@ io.on('connection', (socket) => {
 
   socket.on('sms-sent', function(data) {
     console.log("SMS_SENT", data)
+
+    const {reference, status} = JSON.parse(data)
+
+    fetch(`https://letssolve.me/sms-webhook?reference=${reference}&status=${status}`)
+      .then(r => console.log("wehbook response", r.json()))
+      .catch(e => console.error(e))
   });
 
   socket.on('alive', function(data) {
