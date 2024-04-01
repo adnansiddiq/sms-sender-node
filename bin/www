@@ -31,16 +31,21 @@ var server = http.createServer(app);
 
 const io = new Server(server);
 
+const apiTimer = null
+
 io.on('connection', (socket) => {
   console.log('a user connected');
+  global.isOnline = false
+
+  fetchSms()
 
   socket.on('sms-sent', function(data) {
     console.log("SMS_SENT", data)
 
     const {reference, status} = data
-
     const url = `https://letssolve.me/sms-webhook?reference=${reference}&status=${status}`
     console.log({url})
+    
     fetch(url)
       .then(r =>  r.text())
       .then(j => console.log("wehbook response", j))
@@ -50,10 +55,11 @@ io.on('connection', (socket) => {
   socket.on('alive', function(data) {
     console.log(data)
     global.isOnline = true
-    clearTimeout(responseTimer)
   })
 
   socket.on('disconnect', () => {
+    global.isOnline = false
+    clearTimeout(apiTimer)
     console.log('user disconnected');
   });
 });
@@ -62,16 +68,36 @@ app.set('socketio', io)
 app.set('global', global)
 
 
-var responseTimer = null
 setInterval(() => {
   console.log("Are you Alive?")
   io.emit("alive", "Are you alive")
+}, 1000*60)
 
-  responseTimer = setTimeout(() => {
-    global.isOnline = false
-  }, 1000);
 
-}, 1000*30)
+function fetchSms() {
+  apiTimer = setTimeout( async () => {
+    try {
+      const url = `https://letssolve.me/sms-notifications`
+      console.log({url})
+
+      const response = await fetch(url)
+      const json = await response.json()
+
+      if (json.id ?? null) {
+        const {contact: to, message, id: reference} = req.body
+        io.emit('send-sms', {to, message, reference})
+      } else {
+        console.log("NOT FOUND")
+      }
+      
+    } catch (e) {
+      console.error(e)
+    } finally {
+      fetchSms()
+    }
+    
+  }, (Math.random()*10 + 10) *1000 );
+}
 
 /**
  * Listen on provided port, on all network interfaces.
