@@ -35,7 +35,7 @@ var apiTimer = null
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  global.isOnline = false
+  global.isOnline = true
 
   fetchSms()
 
