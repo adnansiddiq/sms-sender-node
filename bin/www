@@ -85,7 +85,7 @@ function fetchSms() {
       const json = await response.json()
 
       if (json.id ?? null) {
-        const {contact: to, message, id: reference} = req.body
+        const {contact: to, message, id: reference} = json
         io.emit('send-sms', {to, message, reference})
       } else {
         console.log("NOT FOUND")
